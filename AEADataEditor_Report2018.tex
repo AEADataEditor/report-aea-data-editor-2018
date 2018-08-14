@@ -1,0 +1,147 @@
+% AEJ-Article.tex for AEA last revised 22 June 2011
+\documentclass[AEJ]{AEA}
+
+%%%%%% NOTE FROM OVERLEAF: The mathtime package is no longer publicly available nor distributed. We recommend using a different font package e.g. mathptmx if you'd like to use a Times font.
+% \usepackage{mathptmx}
+
+% The mathtime package uses a Times font instead of Computer Modern.
+% Uncomment the line below if you wish to use the mathtime package:
+%\usepackage[cmbold]{mathtime}
+% Note that miktex, by default, configures the mathtime package to use commercial fonts
+% which you may not have. If you would like to use mathtime but you are seeing error
+% messages about missing fonts (mtex.pfb, mtsy.pfb, or rmtmi.pfb) then please see
+% the technical support document at http://www.aeaweb.org/templates/technical_support.pdf
+% for instructions on fixing this problem.
+
+% Note: you may use either harvard or natbib (but not both) to provide a wider
+% variety of citation commands than latex supports natively. See below.
+
+% Uncomment the next line to use the natbib package with bibtex 
+\usepackage{natbib}
+
+% Uncomment the next line to use the harvard package with bibtex
+%\usepackage[abbr]{harvard}
+
+% This command determines the leading (vertical space between lines) in draft mode
+% with 1.5 corresponding to "double" spacing.
+\draftSpacing{1.5}
+
+\begin{document}
+
+\title{Report for 2018 by the AEA Data Editor }
+\shortTitle{Report by Data Editor}
+\author{Lars Vilhuber\thanks{%
+Vilhuber: Cornell University, lars.vilhuber@cornell.edu.}}
+\date{\today}
+\pubMonth{Month}
+\pubYear{Year}
+\pubVolume{Vol}
+\pubIssue{Issue}
+\JEL{}
+\Keywords{}
+
+\begin{abstract}
+Your abstract here.
+\end{abstract}
+
+\maketitle
+
+
+\section{First Section in Body}
+
+Sample figure:
+
+\begin{figure}
+Figure here.
+
+\caption{Caption for figure below.}
+\begin{figurenotes}
+Figure notes without optional leadin.
+\end{figurenotes}
+\begin{figurenotes}[Source]
+Figure notes with optional leadin (Source, in this case).
+\end{figurenotes}
+\end{figure}
+
+Sample table:
+
+\begin{table}
+\caption{Caption for table above.}
+
+\begin{tabular}{lll}
+& Heading 1 & Heading 2 \\ 
+Row 1 & 1 & 2 \\ 
+Row 2 & 3 & 4%
+\end{tabular}
+\begin{tablenotes}
+Table notes environment without optional leadin.
+\end{tablenotes}
+\begin{tablenotes}[Source]
+Table notes environment with optional leadin (Source, in this case).
+\end{tablenotes}
+\end{table}
+
+\section{Data Citations}
+Properly referencing data goes beyond just reproducibility - it is also proper scientific writing style. In the same way that we use bibliographic references to ``printed'' resources, we should also be using such references for data resources, to give and receive credit where credit is due. Not referencing an article or book is at best an oversight, and at worst plagiarism - and the same should apply to data objects. Numerous guides and tutorials exist (ICPSR, Force11, \cite{dataone-l09}).
+
+The AEA uses the Chicago style for citations and bibliographies \citep{aeadatarefs}. However, the Chicago Style Manual (REF) does not provide examples for data citations, and neither does the Citeproc database used by applications like Zotero (REF) and Mendeley (REF).
+
+DataONE \citep{dataone-cite} suggests content and style that resemble the generic working paper or article citation style (adapted to Chicago style):
+\begin{quote}
+    Westbrook JW, Kitajima K, Burleigh JG, Kress WJ, Erickson DL, Wright SJ (2011) Data from: What makes a leaf tough? Patterns of correlated evolution between leaf toughness traits and demographic rates among 197 shade-tolerant woody species in a neotropical forest. Dryad Digital Repository. http://dx.doi.org/10.5061/dryad.8525
+\end{quote}
+ICPSR \citep{icpsr-data-cite} notes  that a citation should include the following items:
+\begin{itemize}
+    \item   Title
+    \item   Author
+    \item   Date
+    \item   Version
+    \item   Persistent identifier (such as the Digital Object Identifier, Uniform Resource Name URN, or Handle System)
+\end{itemize}
+and provides a few examples, with some additional modifiers:
+\begin{quote}
+    Esther Duflo; Rohini Pande, 2006, ``Dams, Poverty, Public Goods and Malaria Incidence in India'', http://hdl.handle.net/1902.1/IOJHHXOOLZ UNF:5:obNHHq1gtV400a4T+Xrp9g== Murray Research Archive [Distributor] V2 [Version]
+\end{quote}
+Finally, the AEA style guide \citep{aeadatarefs} suggests
+\begin{quote}
+    Leiss, Amelia. 1999. ``Arms Transfers to Developing Countries, 1945–1968.'' 
+    Inter-University Consortium for Political and Social Research, Ann Arbor, MI. 
+    ICPSR05404-v1. doi:10.3886/ICPSR05404 (accessed February 8, 2011).
+\end{quote}
+
+For users of BibTex, a generic database entry might look like
+\begin{verbatim}
+@techreport{duflopande2006,
+author = {Esther Duflo and Rohini Pande}, 
+year = 2006, 
+title = {Dams, Poverty, Public Goods and Malaria Incidence in India},
+howpublished = {},
+institution = {Murray Research Archive [Distributor]},
+note = {\url{http://hdl.handle.net/1902.1/IOJHHXOOLZ UNF:5:obNHHq1gtV400a4T+Xrp9g==} V2 [Version]}
+}
+\end{verbatim}
+or
+\begin{verbatim}
+@techreport{leiss1999,
+author = {Leiss, Amelia},
+year = {1999},
+title = {Arms Transfers to Developing Countries, 1945–1968},
+institution = {Inter-University Consortium for Political and Social Research}, 
+address = {Ann Arbor, MI},
+note = {ICPSR05404-v1. DOI:  10.3886/ICPSR05404 (accessed February 8, 2011).},
+doi = {10.3886/ICPSR05404},
+}
+\end{verbatim}
+and thus generate ``\cite{duflopande2006}'' and ``\cite{leiss1999}'' and the bibliographic entry in the References.
+
+% Remove or comment out the next two lines if you are not using bibtex.
+\bibliographystyle{aea}
+\bibliography{paper.bib}
+
+% The appendix command is issued once, prior to all appendices, if any.
+\appendix
+
+\section{Reviewers}
+
+\end{document}
+
