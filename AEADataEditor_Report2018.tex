@@ -18,7 +18,7 @@
 
 % Uncomment the next line to use the natbib package with bibtex 
 \usepackage{natbib}
-
+\usepackage{hyperref}
 % Uncomment the next line to use the harvard package with bibtex
 %\usepackage[abbr]{harvard}
 
@@ -45,6 +45,22 @@ Your abstract here.
 \end{abstract}
 
 \maketitle
+The purpose of scientific publishing is the dissemination of robust research findings, exposing them to the scrutiny of peers. Key to this endeavor is documenting the provenance of those findings. For empirical articles, the foundations on which they reside are external to the article, and often to the journal, in which they are published. Our scientific community faces  increasingly complex issues of privacy and confidentiality that prevent “open” access to those same sources. In consequence, there is a need to properly cite the digital inputs to our published output and to properly curate those inputs.  
+
+Many scientists,  journals, learned societies, and funding agencies have called for greater transparency of research practices, and more assurance that published research is reproducible \citep{Stodden2016-uc,Fuentes2016-wz,Moffitt2016-wl,Camerer2016-kl,Bollen2015-vb,Joskow2015-hd}. This has lead to a focus on transparent access to research data and code \citep{Coffman2017-si,Hoeffler2017-aa,Duvendack2017-js,Hamermesh2017-kq}. 
+
+The AEA's data and code posting policy \citep{American_Economic_Association2008-az}, as well as that of other societies and journals, are intended to create a minimal framework from which to replicate empirical findings. Many partial solutions have been implemented. Journals have implemented verification of submitted code and data during the editorial process,%
+\footnote{The American Journal of Political Science outsources this activity to the Odum Institute for Research in Social Science (CITE). The Journal of the American Statistical Association performs a "broad evaluation of quality and potential for usability of the code and data" since 2016 \citep{Stodden2016-uc}.}
+highlight the verification on data archives \citep{Open_Science_Framework2017-zc}, maintain lists of acceptable third-party repositories,%
+\footnote{Nature Scientific Data maintains a list for its journals \citep{Nature_Scientific_Data2016-hl}, and other institutions (CoreTrustSeal, FAIRsharing) have as their primary purpose to perform this kind of vetting.} 
+and interlink with collaborating repositories to highlight authors' (and repositories') contributions to the data component of a scholarly work.%
+\footnote{Elsevier interlinks, for instance, with ICPSR, highlighting the use of a repository on the article's web page.}
+Outside of journals, several projects are working to educate the community to incorporate principles of replicability and traceability into their workflow.%
+\footnote{P}Open Science Framework, Project TIER, BITSS are just a few of those active in that field \citep{Gentzkow2014-va,Wilson2016-bt}.
+No journal currently does, in my opinion, an adequate job of providing information about restricted-access data, in part because most restricted-access data centers cannot provide structured information about existence, modalities of access, or even data landing pages.%
+\footnote{Restricted-access data hosted on ICPSR and possibly Harvard Dataverse are notable exceptions. On the journal side, Elsevier journals have experimented with "Data Descriptions", but while the form is machine-readable, it is essentially free-form text, and checking the box "confidential data" essentially stops the process of filling in any information.} 
+None of these solutions are widespread, and standards are only now being developed.
+
 
 
 \section{First Section in Body}
@@ -136,7 +152,7 @@ and thus generate ``\cite{duflopande2006}'' and ``\cite{leiss1999}'' and the bib
 
 % Remove or comment out the next two lines if you are not using bibtex.
 \bibliographystyle{aea}
-\bibliography{paper.bib}
+\bibliography{paper,references}
 
 % The appendix command is issued once, prior to all appendices, if any.
 \appendix
