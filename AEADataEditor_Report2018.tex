@@ -21,8 +21,17 @@
 \usepackage{hyperref}
 \usepackage{acronym}
 \usepackage[names]{xcolor}
+\usepackage{graphicx}
 % Uncomment the next line to use the harvard package with bibtex
 %\usepackage[abbr]{harvard}
+
+%%%
+%%% TESTING
+%%%
+\usepackage{blindtext}
+
+\usepackage[most]{tcolorbox}
+\usetikzlibrary{calc}
 
 % This command determines the leading (vertical space between lines) in draft mode
 % with 1.5 corresponding to "double" spacing.
@@ -39,7 +48,41 @@
 \definecolor{darkblue}{rgb}{0 0 255}
 \hypersetup{colorlinks,breaklinks,citecolor=darkblue,linkcolor=darkblue,urlcolor=darkblue}
 \begin{document}
+%%% TESTING
+\tcbset{
+  toplength/.store in={\tcbcornerruletoplength},
+  leftlength/.store in={\tcbcornerruleleftlength},
+  toplength=3cm,
+  leftlength=2cm,
+  bottomlength/.store in={\tcbcornerrulebottomlength},
+  rightlength/.store in={\tcbcornerrulerightlength},
+  bottomlength=3cm,
+  rightlength=2cm,
+  cornerruleshift/.store in={\tcbcornerruleshift},
+  cornerruleshift=1pt,
+  topcornercolor/.store in={\tcbtopcornercolor},
+  bottomcornercolor/.store in={\tcbbottomcornercolor},
+  topcornercolor=green!40!blue,
+  bottomcornercolor=blue!40!green,
+}
 
+\newtcolorbox{cornerbox}[1][]{%
+  enhanced jigsaw,
+  sharp corners,
+  boxrule=0pt,
+  underlay={
+    \coordinate (topend) at ($(frame.north west) + (0:\tcbcornerruletoplength)$);
+    \coordinate (leftend) at ($(frame.north west) - (90:\tcbcornerruleleftlength)$);
+    \coordinate (bottomend) at ($(frame.south east) - (0:\tcbcornerrulebottomlength)$);
+    \coordinate (rightend) at ($(frame.south east) + (90:\tcbcornerrulerightlength)$);
+    \draw[line width=2pt,\tcbtopcornercolor] ([xshift=-\tcbcornerruleshift]leftend) -- ([shift={(-\tcbcornerruleshift,\tcbcornerruleshift)}]frame.north west) -- ([shift={(-\tcbcornerruleshift,\tcbcornerruleshift)}] topend);
+    \draw[line width=2pt,\tcbbottomcornercolor] ([xshift=\tcbcornerruleshift]rightend) -- ([shift={(\tcbcornerruleshift,-\tcbcornerruleshift)}]frame.south east) -- ([shift={(-\tcbcornerruleshift,-\tcbcornerruleshift)}] bottomend);
+  },
+  #1,
+}
+
+
+%%% END TESTING
 \title{Report for 2018 by the AEA Data Editor }
 \shortTitle{Report by Data Editor}
 \author{Lars Vilhuber\thanks{%
@@ -76,6 +119,10 @@ No journal currently does, in my opinion, an adequate job of providing informati
 \footnote{Restricted-access data hosted on ICPSR and possibly Harvard Dataverse are notable exceptions. On the journal side, Elsevier journals have experimented with "Data Descriptions", but while the form is machine-readable, it is essentially free-form text, and checking the box "confidential data" essentially stops the process of filling in any information.} 
 None of these solutions are widespread, and standards are only now being developed.
 
+\begin{cornerbox}
+In the summer of 2018, I had the privilege of contributing a white paper to the Committee on Reproducibility and Replicability in Science of the National Academies of Science on the history and state of reproducibility in economics. In many sciences, new preprint services have emerged within the last two years, e.g., \href{https://psyarxiv.com/}{PsyArXiv}. These are considered to be part of the broader move to greater research transparency. While writing the white paper, I pointed out that this kind of pre-publication exchange has long been the norm in economics. The first National Bureau of Economic Research (NBER) working paper, one of the most prestigious working paper series in economics, was published (in paper form) in 1973 (24). By the early 1990s, there was a wide variety of such working paper series, typically provided by academic departments and research institutions. Since grey literature at the time was not cataloged or indexed by most bibliographic indexes, a distinct effort to identify both working papers and the novel electronic versions grew from modest beginnings in 1992 at Université de Montréal and elsewhere into what is today known as the Research Papers in Economics (RePEc) network, a “collaborative effort by hundreds of volunteers in 99 countries” (25–27). The initial index was split into electronic (WoPEc) (28) and printed working papers (BibEc) (26, 29), testimony to the prevalence of the exchange of scientific research in semi-organized ways. Economists had, in fact, access to a central repository for submitting working papers, based on the arXiv system, but it seems to not have been very popular, in contrast to the decentralized working paper archives (28). In 1997, BibEc counted 34,000 working papers from 368 working paper series (30). RePEc today has data from around 4,600 working paper series and claims about 2.5 million full-text (free) research items, provided in a decentralized fashion by about 2,000 archives (31). These items not only include traditional research papers, but also, since 1994, computer code (32–34). 
+\end{cornerbox}
+
 \section{Definitions}
 A brief definition of the terms ``replicable'' and ``reproducible'' is in order. The terms are somewhat ambiguously defined in the scientific community. We will use the definitions used by \cite{Bollen2015-vb}. ``Reproducibility''  refers to the ability of researchers to achieve the same results as previous researchers, using the same data and same analysis methods, and ``replicability''  refers to the ability of researchers, using the same analysis methods, to duplicate results using ``new'' data. Other authors may use similar or conflicting terms \citep{Clemens2017-zj}. 
 
@@ -98,13 +145,22 @@ Authors submitting their work to the AEA journals will be affected in several wa
 If replicability is truly part of the research scientist's workflow, then by the time she submits an article to any journal, the intermediate and final data products as well as the code used for an article have already been deposited at appropriate repositories and archives. If all such repositories and archives are of sufficient quality, then the additional deposit at a journal is duplicative at best, and perturbative to the provenance chain at worst. The right solution is to reference those other repositories, not copy them. Of course, for those that have not used repositories and simply wish to provide a replication zip archive of the files on their laptop, an adequate deposit solution should also exist.
 By fundamentally relying on references to repositories instead of deposits, it also becomes possible to put public-use and restricted-access data on a comparable footing at the journal with regards to potential replicability. Well documented location of data (through DOI), access protocols (implicit or click-through license, contracts, etc.), and access mechanism (direct download, delivery of physical media or controlled download, sign-on to controlled secure access, etc.) are then available for any data.
 
+\section{Goal 2: Improved Reliability of Replication Materials}
+\begin{figure}
+    \centering
+\includegraphics[width=0.7\textwidth]{images/aer_programs_by_year.png}
+    \caption{Popularity of statistical software in the AER}
+    \label{fig:aer_programs_by_year}
+    \footnotesize Figure provided by Patrick Baylis (UBC), based on filename extensions in ZIP files of replication materials on the AEA website.
+\end{figure}
 
 \section{Data Citations}
-Properly referencing data goes beyond just reproducibility - it is also proper scientific writing style. In the same way that we use bibliographic references to ``printed'' resources, we should also be using such references for data resources, to give and receive credit where credit is due. Not referencing an article or book is at best an oversight, and at worst plagiarism - and the same should apply to data objects. Numerous guides and tutorials exist (ICPSR, Force11, \cite{dataone-l09}).
+Properly referencing data goes beyond just reproducibility - it is also proper scientific writing style. In the same way that we use bibliographic references to ``printed'' resources, we should also be using such references for data resources, to give and receive credit where credit is due. Not referencing an article or book is at best an oversight, and at worst plagiarism - and the same should apply to data objects. Numerous guides and tutorials exist  \citep{dataone-l09,icpsr-data-cite,force11declaration}.
 
-The AEA uses the Chicago style for citations and bibliographies \citep{aeadatarefs}. However, the Chicago Style Manual (REF) does not provide examples for data citations, and neither does the Citeproc database used by applications like Zotero (REF) and Mendeley (REF).
+The AEA uses the Chicago style for citations and bibliographies \citep{aeadatarefs}. However, the Chicago Style Manual \citep{citation-machine,ChicagoManualofStyleChicagoManualStyle2018} does not provide examples for data citations, and neither does the Citation Style Language\footnote{\url{https://citationstyles.org/}} used by applications like Zotero\footnote{\url{https://www.zotero.org/}} and Mendeley Desktop\footnote{\url{https://www.mendeley.com/download-desktop/}}.
 
-As part of our activities, the AEA prepress department has started the process of updating AEA templates available through such software.\footnote{For the technically inclined, this process involves updating an existing style or creating a new style on \url{https://citationstyles.org/} and \url{https://github.com/citation-style-language/styles}, from where it propagates to a large number of software packages.}  
+
+As part of our activities, the AEA prepress department has started the process of updating AEA templates available through such software.\footnote{For the technically inclined, this process involves updating an existing style or creating a new style on \url{https://citationstyles.org/} and \url{https://github.com/citation-style-language/styles}, from where it propagates to a large number of software packages.} Some guidance for data citations is provided at 
 
 DataONE \citep{dataone-cite} suggests content and style that resemble the generic working paper or article citation style (adapted to Chicago style):
 \begin{quote}
