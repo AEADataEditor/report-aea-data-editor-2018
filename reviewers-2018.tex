@@ -1,0 +1,14 @@
+The following replicators have assisted in the post-publication verification of publications:
+
+
+%\csvreader[tabular=p{0.9\textwidth}]%
+%%table head=\bfseries Replicators]%
+%{replicators.csv}{}{%
+%	\firstname \initial \lastname ,  
+%}
+
+%\csvautotabular{replicators.csv}
+\csvreader[head to column names]{replicators.csv}{}%
+{\firstname\xspace  \initial\xspace \lastname ,}
+
+Thanks.
