@@ -24,14 +24,20 @@
 \usepackage{graphicx}
 % Uncomment the next line to use the harvard package with bibtex
 %\usepackage[abbr]{harvard}
+\usepackage{etoolbox}
+\newtoggle{fancy}
+\togglefalse{fancy}
 
 %%%
 %%% TESTING
 %%%
-\usepackage{blindtext}
+%\usepackage{blindtext}
 
-\usepackage[most]{tcolorbox}
-\usetikzlibrary{calc}
+\usepackage{textcomp}
+
+\iftoggle{fancy}{
+\input{fancy-config.tex}
+}{}
 
 % This command determines the leading (vertical space between lines) in draft mode
 % with 1.5 corresponding to "double" spacing.
@@ -47,42 +53,11 @@
 % reset colors
 \definecolor{darkblue}{rgb}{0 0 255}
 \hypersetup{colorlinks,breaklinks,citecolor=darkblue,linkcolor=darkblue,urlcolor=darkblue}
+
+
+
 \begin{document}
-%%% TESTING
-\tcbset{
-  toplength/.store in={\tcbcornerruletoplength},
-  leftlength/.store in={\tcbcornerruleleftlength},
-  toplength=3cm,
-  leftlength=2cm,
-  bottomlength/.store in={\tcbcornerrulebottomlength},
-  rightlength/.store in={\tcbcornerrulerightlength},
-  bottomlength=3cm,
-  rightlength=2cm,
-  cornerruleshift/.store in={\tcbcornerruleshift},
-  cornerruleshift=1pt,
-  topcornercolor/.store in={\tcbtopcornercolor},
-  bottomcornercolor/.store in={\tcbbottomcornercolor},
-  topcornercolor=green!40!blue,
-  bottomcornercolor=blue!40!green,
-}
 
-\newtcolorbox{cornerbox}[1][]{%
-  enhanced jigsaw,
-  sharp corners,
-  boxrule=0pt,
-  underlay={
-    \coordinate (topend) at ($(frame.north west) + (0:\tcbcornerruletoplength)$);
-    \coordinate (leftend) at ($(frame.north west) - (90:\tcbcornerruleleftlength)$);
-    \coordinate (bottomend) at ($(frame.south east) - (0:\tcbcornerrulebottomlength)$);
-    \coordinate (rightend) at ($(frame.south east) + (90:\tcbcornerrulerightlength)$);
-    \draw[line width=2pt,\tcbtopcornercolor] ([xshift=-\tcbcornerruleshift]leftend) -- ([shift={(-\tcbcornerruleshift,\tcbcornerruleshift)}]frame.north west) -- ([shift={(-\tcbcornerruleshift,\tcbcornerruleshift)}] topend);
-    \draw[line width=2pt,\tcbbottomcornercolor] ([xshift=\tcbcornerruleshift]rightend) -- ([shift={(\tcbcornerruleshift,-\tcbcornerruleshift)}]frame.south east) -- ([shift={(-\tcbcornerruleshift,-\tcbcornerruleshift)}] bottomend);
-  },
-  #1,
-}
-
-
-%%% END TESTING
 \title{Report for 2018 by the AEA Data Editor }
 \shortTitle{Report by Data Editor}
 \author{Lars Vilhuber\thanks{%
@@ -93,40 +68,64 @@ Vilhuber: Cornell University, lars.vilhuber@cornell.edu.}}
 \pubVolume{Vol}
 \pubIssue{Issue}
 \JEL{}
-\Keywords{}
+\Keywords{reproducibility; replicability; science of science}
 
-\begin{abstract}
-Your abstract here.
-\end{abstract}
+
+
 
 \maketitle
-The purpose of scientific publishing is the dissemination of robust research findings, exposing them to the scrutiny of peers. Key to this endeavor is documenting the provenance of those findings. For empirical articles, the foundations on which they reside are external to the article, and often to the journal, in which they are published. Our scientific community faces  increasingly complex issues of privacy and confidentiality that prevent ``open'' access to those same sources. In consequence, there is a need to properly cite the digital inputs to our published output and to properly curate those inputs.  
 
-Many scientists,  journals, learned societies, and funding agencies have called for greater transparency of research practices, and more assurance that published research is reproducible \citep{Stodden2016-uc,Fuentes2016-wz,Moffitt2016-wl,Camerer2016-kl,Bollen2015-vb,Joskow2015-hd}. This has lead to a focus on transparent access to research data and code \citep{Coffman2017-si,Hoeffler2017-aa,Duvendack2017-js,Hamermesh2017-kq}. This interim report describes the current conceptual and practical issues, outlines the \ac{AEA}'s efforts, through the new position of Data Editor,  to address these issues, and highlights some of the short- and medium-term changes that economists might expect. 
+
+The purpose of scientific publishing is the dissemination of robust research findings, exposing them to the scrutiny of peers. Key to this endeavor is documenting the provenance of those findings. For theoretical articles, these are the proofs of theorems and the like that the authors provide. For empirical articles, the foundations on which the findings reside are external to the article, and often to the journal, in which they are published. Many scientists,  journals, learned societies, and funding agencies have called for greater transparency of research practices, and more assurance that published research is reproducible \citep{Stodden2016-uc,Fuentes2016-wz,Moffitt2016-wl,Camerer2016-kl,Bollen2015-vb,Joskow2015-hd,ChristensenTransparencyReproducibilityCredibility2018}. Our scientific community faces  increasingly complex issues of privacy and confidentiality that prevent ``open'' access to those same sources \citep{Anderson12009,abowdschmutte.aer.2018}. Large and private databases (often both at the same time) are being used to analyze economic phenomena, with subsequent publications \citep{BakerWagePolicyFirm1994,LazearAm.Econ.Rev.2000,BaileySocialConnectednessMeasurement2018,Chen2017,HallILRReview2018}, yet few such data are available for replication exercises \cite{JengAm.Econ.Rev.2016}. To ensure the credibility of the scientific endeavor, transparency of the methods and data used are critical. Various studies have shown that too few studies are (easily) reproducible \citep{McCullough2007-zx,McCullough2006-cz,AndersonJ.Econ.Methodol.2008,AndersonFed.ReserveBankStLouisRev.1994}. There is a need to properly cite the digital inputs to our published output and to properly curate those inputs.  
+
+In January 2018, I was appointed as the first Data Editor of the American Economic Association, with the mission to ``design  and  oversee  the  AEA  journals’  strategy for archiving and curating research data and promoting  reproducible  research'' \citep{10.1257/pandp.108.745}. This first report by a Data Editor describes my efforts over the past year to advance  that mission. It also highlights some of the short- and medium-term changes that economists might expect when publishing their research.\footnote{A variety of replication concepts have been defined in economics \citep{Hamermesh2007,ClemensJ.Econ.Surv.2017}. In this article, we adopt the definitions articulated by \citet{Bollen2015-vb}, among others. \textit{Reproducibility}  refers to ``the ability [$\dots$] to duplicate the results of a prior study using the same materials and procedures as were used by the original investigator,'' and is related to the ``narrow" sense of replication of \cite{Pesaran2003}. Use of the ``same procedures'' may imply using the same computer code or re-implementing the statistical procedures in a different software package. \cite{Hamermesh2007} calls this ``pure replication". \citet[p. 942]{ChristensenTransparencyReproducibilityCredibility2018} argue that this is the ``basic standard [that] should be expected of all published economics research, and hope this expectation is universal among researchers.'' \textit{Replicability} refers to ``the ability of a researcher to duplicate the results of a prior study if the same procedures are followed but new data are collected'' \citep[: ``wider'' sense of replication]{Pesaran2003}, while \textit{generalizability} refers to the extension of the scientific findings to other populations, contexts, and time frames, perhaps using different methods \citep[: ``scientific replication'']{Hamermesh2017}}
 
 
 \section{The current environment}
 
-The \ac{AEA}'s data and code posting policy \citep{American_Economic_Association2008-az}, as well as that of other societies and journals, are intended to create a minimal framework from which to replicate empirical findings. Many partial solutions have been implemented. A few journals have implemented verification of submitted code and data during the editorial process,%
-\footnote{The American Journal of Political Science outsources this activity to the Odum Institute for Research in Social Science (CITE). The Journal of the American Statistical Association performs a "broad evaluation of quality and potential for usability of the code and data" since 2016 \citep{Stodden2016-uc}.}
-highlight the verification on data archives \citep{Open_Science_Framework2017-zc}, maintain lists of acceptable third-party repositories,%
-\footnote{Nature Scientific Data maintains a list for its journals \citep{Nature_Scientific_Data2016-hl}, and other institutions (CoreTrustSeal, FAIRsharing) have as their primary purpose to perform this kind of vetting.} 
-and interlink with collaborating repositories to highlight authors' (and repositories') contributions to the data component of a scholarly work.%
-\footnote{Elsevier interlinks, for instance, with ICPSR, highlighting the use of a repository on the article's web page.}
-Outside of journals, several projects are working to educate the community to incorporate principles of replicability and traceability into their workflow.%
-\footnote{Open Science Framework, Project TIER, BITSS are just a few of those active in that field \citep{Gentzkow2014-va,Wilson2016-bt}.}
-No journal currently does, in my opinion, an adequate job of providing information about restricted-access data, in part because most restricted-access data centers cannot provide structured information about existence, modalities of access, or even data landing pages.%
-\footnote{Restricted-access data hosted on ICPSR and possibly Harvard Dataverse are notable exceptions. On the journal side, Elsevier journals have experimented with "Data Descriptions", but while the form is machine-readable, it is essentially free-form text, and checking the box "confidential data" essentially stops the process of filling in any information.} 
+The \ac{AEA}'s data and code posting policy \citep{American_Economic_Association2008-az}, as well as that of other societies and journals, are a reaction to earlier calls to increase transparency \citep{McCullough2006-cz,AndersonJ.Econ.Methodol.2008}, and are intended to create a minimal framework from which to replicate empirical findings, by requiring the data and code to be available to others. In practice, enough reproduction and replication attempts fail \citep{CamererScience2016,Chang2015-dl,ChangAm.Econ.Rev.2017}, not just in economics \citep{Baker2015-sh,Collaboration2015-ev} (I will comment on our own efforts later). It remains an open question who should be tasked with conducting a ``replication'' in the first place - should the editorial team verify reproducibility during the editorial process \citep{JacobyInsideHigherEd2017}, should the referees be able to do this, or should they be required to do this? Or should the readers of the articles, and the broader scientific community, attest to the replicability and ultimately the generalizability of the findings \citep{Hamermesh2017}? Related is the question whether  enough replications are being published \citep{BerryAm.Econ.Rev.2017,Burman2010-ng,Coffman2017-si,Duvendack2017-js,Hoffler-LibMag.2017}.
+
+Very few journals have implemented verification of submitted code and data during the editorial process. In political science, the American Journal of Political Science in collaboration with the Odum Institute for Research in Social Science \citep{Christian2018} has been conducting data curation and code verification. The Journal of the American Statistical Association performs a ``broad evaluation of quality and potential for usability of the code and data'' since 2016 \citep{Stodden2016-uc}.
+
+%%%% DATA ARCHIVE LISTS
+%highlight the verification on data archives \citep{Open_Science_Framework2017-zc}, maintain lists of acceptable third-party repositories,%
+%\footnote{Nature Scientific Data maintains a list for its journals \citep{Nature_Scientific_Data2016-hl}, and other institutions (CoreTrustSeal, FAIRsharing) have as their primary purpose to perform this kind of vetting.} 
+%and interlink with collaborating repositories to highlight authors' (and repositories') contributions to the data component of a scholarly work.%
+%\footnote{Elsevier interlinks, for instance, with ICPSR, highlighting the use of a repository on the article's web page.}
+
+%%% EDUCATION
+%Outside of journals, several projects are working to educate the community to incorporate principles of reproducibility and traceability into their workflow.%
+%\footnote{Open Science Framework, Project TIER, BITSS are just a few of those active in that field \citep{Gentzkow2014-va,Wilson2016-bt}.}
+
+No journal currently does an adequate job of providing information about restricted-access data.\footnote{Elsevier journals have experimented with "Data Descriptions", but while the form is machine-readable, it is essentially free-form text, and checking the box "confidential data" essentially stops the process of filling in any information.} This is not only the fault of the journals: Most restricted-access data centers do not provide structured information about existence, modalities of access, or even data landing pages for the datasets they provide access to.%
+\footnote{Restricted-access data hosted on ICPSR and possibly Harvard Dataverse are notable exceptions.} 
 None of these solutions are widespread, and standards are only now being developed.
 
-\begin{cornerbox}
-In the summer of 2018, I had the privilege of contributing a white paper to the Committee on Reproducibility and Replicability in Science of the National Academies of Science on the history and state of reproducibility in economics. In many sciences, new preprint services have emerged within the last two years, e.g., \href{https://psyarxiv.com/}{PsyArXiv}. These are considered to be part of the broader move to greater research transparency. While writing the white paper, I pointed out that this kind of pre-publication exchange has long been the norm in economics. The first National Bureau of Economic Research (NBER) working paper, one of the most prestigious working paper series in economics, was published (in paper form) in 1973 \citep{WelchEducationInformationEfficiency1973}. By the early 1990s, there was a wide variety of such working paper series, typically provided by academic departments and research institutions. Since grey literature at the time was not cataloged or indexed by most bibliographic indexes, a distinct effort to identify both working papers and the novel electronic versions grew from modest beginnings in 1992 at Université de Montréal and elsewhere into what is today known as the Research Papers in Economics (RePEc) network, a “collaborative effort by hundreds of volunteers in 99 countries” \citep{RePEcResearchPapers,KrichelEconomicsOpenBibliographic2009,Batiz-Lazobriefbusinesshistory2012}. The initial index was split into electronic (WoPEc) \citep{KrichelWoPEcElectronicWorking1997}  and printed working papers (BibEc) \citep{KrichelEconomicsOpenBibliographic2009,CruzCatalogingEconomicsPreprints2000}, testimony to the prevalence of the exchange of scientific research in semi-organized ways.  In 1997, BibEc counted 34,000 working papers from 368 working paper series (30). RePEc today has data from around 4,600 working paper series and claims about 2.5 million full-text (free) research items, provided in a decentralized fashion by about 2,000 archives (31). These items not only include traditional research papers, but also, since 1994, computer code (32–34). 
-\end{cornerbox}
+License: \cite{StoddenSoftwarePatentsBarrier2012}
 
-\section{Definitions}
-A brief definition of the terms ``replicable'' and ``reproducible'' is in order. The terms are somewhat ambiguously defined in the scientific community. We will use the definitions used by \cite{Bollen2015-vb}. ``Reproducibility''  refers to the ability of researchers to achieve the same results as previous researchers, using the same data and same analysis methods, and ``replicability''  refers to the ability of researchers, using the same analysis methods, to duplicate results using ``new'' data. Other authors may use similar or conflicting terms \citep{Clemens2017-zj}. 
+
+%\include{cornerbox.tex}
+\section{The Mission, if You Choose to Accept It}
+With the mission outlined above in mind, the Data Editor's long-term tasks are
+\begin{enumerate}
+	\item Elaborate a data and code availability policy that is modern, responsive, and imposes the lowest burden on authors and readers that is commensurate with the overall goals;
+	\item Creating technical, human, and organizational infrastructure at the AEA journals to support all aspects of implementing the data and code availability policy;
+	\item Working with other providers of scientific infrastructure to improve support for documenting provenance and replicability;
+	\item Working with the economics community to enhance and broaden education on replicable science;
+	\item Conducting research and participating in experiments in the intersection of publication, replication, and provenance documentation
+\end{enumerate}
+In particular, a revised data and code posting policy should maximize credibility and trustworthiness of research findings, and address the following goals: 
+\begin{enumerate}
+	\item to encourage and reward incorporating basic principles of replicability into researchers' workflow;
+	\item to prioritize linking to existing data and code repositories, as the primary mechanism of providing source materials, with a journal-sanctioned repository as a fall-back archive;
+	\item to require and facilitate proper documentation of  restricted-access data;
+	\item to enforce a limited measure of verification;
+	\item balance the previous goals with the need to \textit{reduce} the burden on authors, not increase it. 
+\end{enumerate}
 
 \section{Implementing improved transparency of research}
+In the first year, we have moved a few tasks forward. 
+
 A modern data and code availability policy should support both reproducibility and replicability, by supporting accurate and transparent description of the provenance of the scientific results. In particular, a functional implementation of those concepts suggests that both data and code need to be subject to the \ac{FAIR} principles \cite{FORCE11FAIRDATAPRINCIPLES}: findable, accessible, interoperable, and re-usable. In this context, we interpret the ``interoperability'' of code as ``code that works, and the workings of which are comprehensible by a third party'' (CITE??). 
 
 \subsection{Goal 1: Improved findability of data used in research articles}
@@ -154,6 +153,9 @@ By fundamentally relying on references to repositories instead of deposits, it a
     \footnotesize Figure provided by Patrick Baylis (UBC), based on filename extensions in ZIP files of replication materials on the AEA website.
 \end{figure}
 
+\cite{ChristianOperationalizingReplicationStandard2018}
+
+
 \section{Data Citations}
 Properly referencing data goes beyond just reproducibility - it is also proper scientific writing style. In the same way that we use bibliographic references to ``printed'' resources, we should also be using such references for data resources, to give and receive credit where credit is due. Not referencing an article or book is at best an oversight, and at worst plagiarism - and the same should apply to data objects. Numerous guides and tutorials exist  \citep{dataone-l09,icpsr-data-cite,force11declaration}.
 
@@ -163,9 +165,15 @@ The AEA uses the Chicago style for citations and bibliographies \citep{aeadatare
 As part of our activities, the AEA prepress department has started the process of updating AEA templates available through such software.\footnote{For the technically inclined, this process involves updating an existing style or creating a new style on \url{https://citationstyles.org/} and \url{https://github.com/citation-style-language/styles}, from where it propagates to a large number of software packages.} Some guidance for data citations is provided at 
 
 
+
+
+\section{Future activities}
+Keeping an eye on novel techniques \cite{BrinckmanComputingenvironmentsreproducibility2018,Butlerroledatasupplements2018}
+REgistered reports: \cite{ChrisChambersRegisteredReportsstep2014,NosekRegisteredReportsMethod2014}
+
 % Remove or comment out the next two lines if you are not using bibtex.
 \bibliographystyle{aea}
-\bibliography{paper,references,zotero}
+\bibliography{paper,references,zotero,aej-rep}
 
 % The appendix command is issued once, prior to all appendices, if any.
 \appendix

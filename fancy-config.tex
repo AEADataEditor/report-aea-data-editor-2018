@@ -1,0 +1,33 @@
+\usepackage[most]{tcolorbox}
+\usetikzlibrary{calc}
+\tcbset{
+	toplength/.store in={\tcbcornerruletoplength},
+	leftlength/.store in={\tcbcornerruleleftlength},
+	toplength=3cm,
+	leftlength=2cm,
+	bottomlength/.store in={\tcbcornerrulebottomlength},
+	rightlength/.store in={\tcbcornerrulerightlength},
+	bottomlength=3cm,
+	rightlength=2cm,
+	cornerruleshift/.store in={\tcbcornerruleshift},
+	cornerruleshift=1pt,
+	topcornercolor/.store in={\tcbtopcornercolor},
+	bottomcornercolor/.store in={\tcbbottomcornercolor},
+	topcornercolor=green!40!blue,
+	bottomcornercolor=blue!40!green,
+}
+
+\newtcolorbox{cornerbox}[1][]{%
+	enhanced jigsaw,
+	sharp corners,
+	boxrule=0pt,
+	underlay={
+		\coordinate (topend) at ($(frame.north west) + (0:\tcbcornerruletoplength)$);
+		\coordinate (leftend) at ($(frame.north west) - (90:\tcbcornerruleleftlength)$);
+		\coordinate (bottomend) at ($(frame.south east) - (0:\tcbcornerrulebottomlength)$);
+		\coordinate (rightend) at ($(frame.south east) + (90:\tcbcornerrulerightlength)$);
+		\draw[line width=2pt,\tcbtopcornercolor] ([xshift=-\tcbcornerruleshift]leftend) -- ([shift={(-\tcbcornerruleshift,\tcbcornerruleshift)}]frame.north west) -- ([shift={(-\tcbcornerruleshift,\tcbcornerruleshift)}] topend);
+		\draw[line width=2pt,\tcbbottomcornercolor] ([xshift=\tcbcornerruleshift]rightend) -- ([shift={(\tcbcornerruleshift,-\tcbcornerruleshift)}]frame.south east) -- ([shift={(-\tcbcornerruleshift,-\tcbcornerruleshift)}] bottomend);
+	},
+	#1,
+}
