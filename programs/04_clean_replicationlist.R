@@ -1,52 +1,45 @@
 # We clean up additional variables on repllist (which is manually coded)
-# 
 
-# Restrict the variables
-repllist2 <- readRDS(file=file.path(interwrk,"replication_list_2.Rds"))  %>% 
-	select(DOI,`Entry Questionnaire`,`Entry Questionnaire Author`,
-		   `Expected Difficulty`,Replicator,Completed,Replicated,
-		   `2nd Replicator`,Completed_1,Replicated_1,
-		   `Data Type`,`Data Access Type`,`Data URL`,`Data Contact`,
-		   `Start-time`,`End-time`,`Main Issue`,
-		   `Data Access Type: restricted`,`Data Access Type: public`,`Data Access Type: Unknown`) 
+# Read the compiled replication lists
+repllist2 <- readRDS(file=file.path(interwrk,"replication_list_2.Rds"))
 
-# merge on biblio information 
+# Merge with bibliographic information and save new dataframe
 bibinfo.df <- readRDS(file=file.path(interwrk,"crossref_info.Rds"))
 repllist3 <- left_join(repllist2,bibinfo.df,by="DOI")
 saveRDS(repllist3,file=file.path(interwrk,"replication_list_3.Rds"))
 
-# The variable Replicated is a bit noisy:
+# -------------------------------------
+# Manually tidy the Replicated variable, which is a bit noisy
+# -------------------------------------
 
-table(repllist3$Replicated)
+# Check to see the various options used
+table(repllist3$Replicated1)
+table(repllist3$Replicated2)
 
-# We recode
-val.partial <- c("partial","partially","partly","yes(?) table 3 still unable to replicate","mostly")
+# Classify the various options
+val.partial <- c("partial","partially","partly","yes(?) table 3 still unable to replicate","mostly",
+                 "partial (sas files couldn't run)","y (mostly)","y (unavailable data for one table)")
 val.yes <- c("yes","y")
+val.no  <- c("no","n","n (code errors)")
 
+# Recode
+repllist4 <- repllist3 %>%
+	mutate(replicated1_clean = ifelse(tolower(Replicated1) %in% val.partial,"partially",
+	                                  ifelse(tolower(Replicated1) %in% val.yes, "yes",
+	                                         ifelse(tolower(Replicated1) %in% val.no,"no",
+	                                                tolower(Replicated1)
+	                                                )
+	                                         )
+	                                  )
+	       ) %>%
+  mutate(replicated2_clean = ifelse(tolower(Replicated2) %in% val.partial,"partially",
+                                    ifelse(tolower(Replicated2) %in% val.yes, "yes",
+                                           ifelse(tolower(Replicated2) %in% val.no,"no",
+                                                  tolower(Replicated2)
+                                                  )
+                                           )
+                                    )
+         )
 
-repllist4 <- repllist3 %>% 
-	mutate(replicated_clean = 
-		   	ifelse(tolower(Replicated) %in% val.partial,
-				  "partially",
-				  ifelse(tolower(Replicated) %in% val.yes,
-				  "yes",
-				  tolower(Replicated))
-		   )
-	)
-
-
-# 
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Save master replication list to be used for analysis
 saveRDS(repllist4,file=file.path(interwrk,"replication_list_clean.Rds"))
