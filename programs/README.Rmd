@@ -1,0 +1,180 @@
+---
+title: "Programs"
+author: "Lars Vilhuber"
+date: "May 22, 2018"
+output: 
+  html_document: 
+    keep_md: yes
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Program directory
+This directory contains all programs necessary to run the cleaning, analysis, etc. They can be run separately, or from the master document (paper). 
+
+## Setup
+Most parameters are set in the `config.R`:
+```{r setup_config}
+source(file.path(rprojroot::find_rstudio_root_file(),"pathconfig.R"),echo=TRUE)
+source(file.path(programs,"config.R"), echo=TRUE)
+```
+
+Any libraries needed are called and if necessary installed through `libraries.R`:
+
+```{r setup_libraries}
+source(file.path(basepath,"global-libraries.R"),echo=TRUE)
+source(file.path(programs,"libraries.R"), echo=TRUE)
+```
+
+
+
+## Download the replication data from Google Sheet
+The responses to the replication attempts are stored on Google Sheets. 
+```{r download_replication,eval=FALSE}
+source(file.path(programs,"01_download_replication.R"),echo=TRUE)
+```
+
+## Get CrossRef information
+The master replication list has all the DOIs. We clean that up first, and then  look up the DOI at CrossRef.
+```{r read_clean_list,cache=TRUE}
+source(file.path(programs,"02_read_clean_replicationlist.R"),echo=TRUE)
+```
+
+```{r get_crossref,cache=TRUE,eval=FALSE}
+source(file.path(programs,"03_get_crossref.R"),echo=TRUE)
+```
+
+```{r clean_replication,cache=TRUE}
+source(file.path(programs,"04_clean_replicationlist.R"),echo=TRUE)
+```
+
+
+
+
+
+## Core analysis and figures
+We can now tabulate the replications listed (not run) by journal and year:
+```{r list_journals,results='asis'}
+repllist4 <- readRDS(file=file.path(interwrk,"replication_list_clean.Rds"))
+entryQ <- readRDS(file = file.path(dataloc,"entryQ.Rds"))
+table1 <- repllist4 %>% 
+	merge(entryQ,by="DOI") %>%
+	group_by(journal,year) %>% filter(!is.na(journal)) %>% summarize(n=n()) %>% spread(year,n) %>%
+	ungroup() %>%
+	mutate(Total = rowSums(select(.,-journal),na.rm = TRUE)) 
+write.csv(table1,file.path(TexIncludes,"journal_by_year.csv"),quote = FALSE,row.names = FALSE,na = "")
+knitr::kable(table1)
+```
+We also tabulate the replication results. Note that this is a noisy measure: in some cases, when only an assessment was made, replication was set to "no", which is incorrect.
+
+```{r list_journals2,results='asis'}
+
+table2 <- repllist4 %>% 
+	merge(entryQ,by="DOI") %>% 
+	group_by(journal,replicated1_clean) %>% filter(!is.na(journal)) %>% summarize(n=n()) %>% spread(replicated1_clean,n)
+# the last entry is for NA
+names(table2)[length(names(table2))] <- "NA"
+func <- function(z) if (is.numeric(z)) sum(z,na.rm=TRUE) else ''
+sumrow <- as.data.frame(lapply(table2, func))
+sumrow[1] <- "Total"
+names(sumrow)[length(sumrow)] <- "NA"
+table2 <- bind_rows(table2,sumrow)  %>% mutate(Sum = sum(no,partially,yes,`NA`,na.rm = TRUE))
+table2 <- head(table2,n=2)
+write.csv(table2,file.path(TexIncludes,"journal_by_replicated.csv"),quote = FALSE,row.names = FALSE)
+knitr::kable(table2)
+
+```
+
+Some quality diagnostics:
+```{r qa1,results='asis'}
+knitr::kable(repllist4 %>% mutate(flag_issue = as.numeric(is.na(`Main Issue`))) %>% filter(!is.na(journal)) %>%  group_by(flag_issue,replicated_clean) %>% summarise(n=n())  %>% spread(flag_issue,n),caption = "Presence of notes (Main Issue)")
+
+```
+
+## Replicators
+
+Overall, there were `r nrow(table(repllist4$Replicator))` Replicators.
+
+## Software
+
+```{r}
+entry_merge <- merge(entryQ,bibinfo.df,by="DOI",all.x= TRUE)
+entry_merge_prog <- entry_merge %>%
+  select(journal,ProgramFormat,year) %>%
+  mutate(Stata = grepl("stata", tolower(ProgramFormat)),
+         Matlab = grepl("matlab", tolower(ProgramFormat)),
+         R = grepl(", r", tolower(ProgramFormat)) | tolower(ProgramFormat) %in% c("r"),
+         SAS = grepl("sas", tolower(ProgramFormat)),
+         Fortran = grepl("fortran", tolower(ProgramFormat)),
+         Mathematica = grepl("mathematica", tolower(ProgramFormat)),
+         SPSS = grepl("spss", tolower(ProgramFormat)),
+         Eviews = grepl("eviews", tolower(ProgramFormat)),
+         Excel = grepl("excel", tolower(ProgramFormat)),
+         `Not Reported` = is.na(ProgramFormat))
+
+# Make prog table
+tab_prog <- entry_merge_prog %>% group_by(journal) %>%
+  summarize(Stata = sum(Stata),
+            Matlab = sum(Matlab),
+            R = sum(R),
+            SAS = sum(SAS),
+            Fortran = sum(Fortran),
+            Mathematica = sum(Mathematica),
+            SPSS = sum(SPSS),
+            Eviews = sum(Eviews),
+            Excel = sum(Excel),
+            `Not Reported` = sum(`Not Reported`)) %>% 
+			mutate(Total = rowSums(select(.,-journal))) 
+tab_prog_pct <- tab_prog 
+tab_prog_pct[,-(1:1)] <- round(sweep(tab_prog[,-(1:1)],1,tab_prog$Total, "/")*100,2)
+
+write.csv(tab_prog,file.path(TexIncludes,"software_by_journal.csv"),quote = FALSE,row.names = FALSE)
+write.csv(tab_prog_pct,file.path(TexIncludes,"software_by_journal_pct.csv"),quote = FALSE,row.names = FALSE)
+knitr::kable(tab_prog_pct)
+
+# Define data format variable
+entry_merge_data <- entry_merge %>%
+  select(journal,OnlineDataFormat1,ProgramFormat,year) %>%
+  mutate(Stata = grepl("stata", tolower(OnlineDataFormat1)),
+         Matlab = grepl("matlab", tolower(OnlineDataFormat1)),
+         R = grepl(", r", tolower(OnlineDataFormat1)) | tolower(ProgramFormat) %in% c("r"),
+         Fortran = grepl("fortran", tolower(OnlineDataFormat1)),
+         SPSS = grepl("spss", tolower(OnlineDataFormat1)),
+         Excel = grepl("excel", tolower(OnlineDataFormat1)),
+         CSV = grepl("csv", tolower(OnlineDataFormat1)),
+         txt = grepl("txt", tolower(OnlineDataFormat1)),
+         `Not Reported` = is.na(OnlineDataFormat1))
+
+# Make data table
+tab_data <- entry_merge_data %>% group_by(journal) %>%
+  summarize(Stata = sum(Stata),
+            Matlab = sum(Matlab),
+            RDS = sum(R),
+            Fortran = sum(Fortran),
+            SPSS = sum(SPSS),
+            Excel = sum(Excel),
+            CSV = sum(CSV),
+            txt = sum(txt),
+            `Not Reported` = sum(`Not Reported`))  %>% 
+			mutate(Total = rowSums(select(.,-journal))) 
+tab_data_pct <- tab_data 
+tab_data_pct[,-(1:1)] <- round(sweep(tab_data[,-(1:1)],1,tab_data$Total, "/")*100,2)
+
+write.csv(tab_data,file.path(TexIncludes,"dataformat_by_journal.csv"),quote = FALSE,row.names = FALSE)
+write.csv(tab_data_pct,file.path(TexIncludes,"dataformat_by_journal_pct.csv"),quote = FALSE,row.names = FALSE)
+knitr::kable(tab_data_pct)
+
+
+
+```
+
+## NOT RUN YET
+
+
+The final program produces the tables and figures. 
+
+```{r analytics,eval=FALSE}
+#source(file.path(programs,"05_analytics.R"),echo = TRUE)
+```
