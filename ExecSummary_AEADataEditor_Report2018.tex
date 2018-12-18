@@ -1,0 +1,148 @@
+% AEJ-Article.tex for AEA last revised 22 June 2011
+\documentclass[AEJ]{AEA}
+
+%%%%%% NOTE FROM OVERLEAF: The mathtime package is no longer publicly available nor distributed. We recommend using a different font package e.g. mathptmx if you'd like to use a Times font.
+% \usepackage{mathptmx}
+
+% The mathtime package uses a Times font instead of Computer Modern.
+% Uncomment the line below if you wish to use the mathtime package:
+%\usepackage[cmbold]{mathtime}
+% Note that miktex, by default, configures the mathtime package to use commercial fonts
+% which you may not have. If you would like to use mathtime but you are seeing error
+% messages about missing fonts (mtex.pfb, mtsy.pfb, or rmtmi.pfb) then please see
+% the technical support document at http://www.aeaweb.org/templates/technical_support.pdf
+% for instructions on fixing this problem.
+
+% Note: you may use either harvard or natbib (but not both) to provide a wider
+% variety of citation commands than latex supports natively. See below.
+
+% Uncomment the next line to use the natbib package with bibtex 
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{acronym}
+\usepackage[names]{xcolor}
+\usepackage{graphicx}
+\usepackage{csvsimple}
+% Uncomment the next line to use the harvard package with bibtex
+%\usepackage[abbr]{harvard}
+\usepackage{etoolbox}
+\newtoggle{fancy}
+\togglefalse{fancy}
+
+\usepackage{xspace}
+% to adjust floats
+\usepackage{placeins}
+% to read the table
+\usepackage{booktabs}
+\usepackage{ifthen}
+\usepackage{csvsimple}
+\usepackage{longtable}
+
+\usepackage{textcomp}
+
+\iftoggle{fancy}{
+	\input{fancy-config.tex}
+}{}
+
+% This command determines the leading (vertical space between lines) in draft mode
+% with 1.5 corresponding to "double" spacing.
+\draftSpacing{1.5}
+
+%% make somewhat tigher enumeration environments
+\usepackage{enumitem}
+\setlist[enumerate]{itemsep=0pt,parsep=0pt,topsep=1pt}
+\setlist[itemize]{itemsep=0pt,parsep=0pt}
+
+%% Acronyms
+\acrodef{AEA}{American Economic Association}
+\acrodef{DOI}{Digital Object Identifier}
+\acrodef{FAIR}{Findable, Accessible, Interoperable, Re-usable}
+\acrodef{PSID}{Panel Study of Income Dynamics}
+\acrodef{HRS}{Health and Retirement Study}
+\acrodef{RCT}{randomized control trial}
+
+% reset colors
+\definecolor{darkblue}{rgb}{0 0 255}
+\hypersetup{colorlinks,breaklinks,citecolor=darkblue,linkcolor=darkblue,urlcolor=darkblue}
+
+% Different ways to cite URLS
+%\newcommand{\urlcite}[2]{\href{#1}{#2}
+\newcommand{\urlcite}[2]{#2\footnote{\url{#1}}}
+
+\begin{document}
+	
+	\title{Summary and Action Items for: Report for 2018 by the AEA Data Editor }
+	\shortTitle{Report by Data Editor}
+	\author{Lars Vilhuber\thanks{%
+			Vilhuber: Cornell University, lars.vilhuber@cornell.edu.}}
+	\date{\today}
+	\pubMonth{January}
+	\pubYear{2019}
+	\pubVolume{}
+	\pubIssue{}
+	\JEL{}
+	\Keywords{reproducibility; replicability; science of science}
+	
+	
+	\begin{abstract}
+		
+	\end{abstract}
+	
+	\maketitle
+	
+\section{Goals}
+\begin{itemize}
+	\item Greater transparency for all data underlying AEA articles, including confidential data, while systematically incorporating third-party repositories
+	\item Greater reliability of computations where possible
+\end{itemize}
+
+\section{Key points}
+\begin{itemize}
+	\item Work on an improved ``Data and Code Availability Policy'', associated infrastructure, and guidance is progressing
+	\begin{itemize}
+		\item New policy plus interpretation drafted
+		\item Draft guidance available
+		\item Infrastructure = data and code repository: contract being negotiated, technical improvements planned
+		\item Infrastructure = better metadata about where data and code are stored: developed, user interface being developed
+		\item Infrastructure = undergraduate lab, augmented with graduate students, tasked with pre-acceptance verification is working
+	\end{itemize}
+	\item Working selectively with a few editors on pre-publication (pre-acceptance) assessments (primarily AEJ:Policy at this point)
+	\item Issues in migration /future deposits:
+	\begin{itemize}
+		\item Historical archives need to be put under a license appropriate for data and code (no current license; copyright retained)
+		\item Future deposits need a default license, and acceptable alternate licenses
+	\end{itemize}
+\end{itemize}
+
+\section{Outlook}
+\begin{itemize}
+	\item The new ``AEA Data and Code Repository'' will be made available to new submissions, and historical submissions migrated, in 2019Q2/2019Q3.
+	\item The Data Editor, in coordination with the Secretary and the Editors, will disseminate and start implementing the new ``Data and Code Availability Policy''
+	\item The Data Editor, in coordination with the Secretary and legal Counsel, will determine an appropriate set of licenses for own (``AEA Data and Code Repository'') and third-party repositories
+	\item Enhanced but user-friendly metadata will identify locations, persistence, and licenses of all data and code 
+	\item Scaling pre-acceptance verification to more journals, using non-Cornell students
+\end{itemize}
+
+
+
+\section{Action items for the EC}
+
+\begin{itemize}
+	\item[ACTION:] The EC is \textbf{requested to approve}: All historical archives shall be licenses   under a mixed open-source license (CC-BY 4.0 for databases and text,  modified BSD for  code). This is a change to the overall policy of the AEA as to intellectual property.
+	\item[Notes:]
+	\begin{itemize}
+		\item \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution CC-BY 4.0} is the gold-standard for open licenses, allowing all re-use, without conditions other than attribution (citing). Other licenses impose restrictions - ShareAlike, Non-Commercial, Non-Derivative. 
+	    \item Absence of license means that re-use is not approved in general, every re-use would require the AEA to provide permission. In theory, all replication attempts currently are ``unauthorized'' in the absence of a license
+	    \item The Creative Commons organization itself suggests NOT to use CC licenses for software
+	    \item \href{https://opensource.org/licenses/BSD-3-Clause}{Modified BSD license} is the suggested license for open re-use of software (code), but others are also acceptable (as per \url{https://opensource.org/licenses}). 
+	\end{itemize}
+	\item[ACTION:] The EC is \textbf{requested to approve}: All future supplements in the hosted repository shall have \textbf{(a)} copyright by the authors, not the AEA \textbf{(b)} requirement to make databases available under some open license sufficient for replication, and \textbf{(c)}  all code available under an open-source license sufficient to allow for replication
+	\item[Notes:]
+	\begin{itemize}
+		\item This is a change for the AEA in terms of who holds the copyright
+		\item It is in line with best practices for replicable science
+	\end{itemize}
+\end{itemize}
+
+
+\end{document}
